@@ -183,23 +183,29 @@ CGEventRef KeyHandler(CGEventTapProxy proxy, CGEventType type, CGEventRef event,
                     } else {
                         kbHandler.kbMethod = VKM_OFF;
                     }
-                    
-                    [((AppDelegate*) refcon) updateCheckedItem];
-                    [((AppDelegate*) refcon) updateStatusItem];
+
+                    AppDelegate *delegate = (AppDelegate*) refcon;
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [delegate updateCheckedItem];
+                        [delegate updateStatusItem];
+                    });
                     validShortcut = true;
                 }
-                
+
                 if (((flag & controlKeys) == [AppData sharedAppData].switchMethodCombo.flags) && (keycode == [AppData sharedAppData].switchMethodCombo.code) ){
                     if (kbHandler.kbMethod == VKM_VNI) {
                         kbHandler.kbMethod = VKM_TELEX;
                     } else if (kbHandler.kbMethod == VKM_TELEX) {
                         kbHandler.kbMethod = VKM_VNI;
                     }
-                    
+
                     if (kbHandler.kbMethod != VKM_OFF) {
                         [[AppData sharedAppData].userPrefs setValue:[NSNumber numberWithInt:kbHandler.kbMethod] forKey:NAKL_KEYBOARD_METHOD];
-                        [((AppDelegate*) refcon) updateCheckedItem];
-                        [((AppDelegate*) refcon) updateStatusItem];
+                        AppDelegate *delegate = (AppDelegate*) refcon;
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [delegate updateCheckedItem];
+                            [delegate updateStatusItem];
+                        });
                     }
                     validShortcut = true;
                 }
